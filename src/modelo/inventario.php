@@ -8,18 +8,18 @@ class Inventario {
 	private $items;
 	private $potenciadores;
 
-	
-	public function __construct() { 
+
+	public function __construct() {
 		$this->items = array();
 		$this->potenciadores = array();
 	}
-	
+
 	public function getItems() {
-		return $this->items;		
+		return $this->items;
 	}
 
 	public function getItemPorTipo($tipo) {
-		$flag = NULL;	
+		$flag = NULL;
 
 		foreach ($this->items as &$aux) {
 			if ($aux->getTipo() == $tipo){
@@ -28,15 +28,15 @@ class Inventario {
 			}
 		}
 
-		return $flag;	
+		return $flag;
 	}
-	
+
 	public function addItem($item) {
 		$this->items[] = $item;
 	}
-	
+
 	public function removeItem($item) {
-		$i = findid ($this->items, $item);
+		$i = $this->findid ($this->items, $item);
 
 		if ($i != -1){
 			unset($this->items[$i]);
@@ -44,11 +44,11 @@ class Inventario {
 	}
 
 	public function getPotenciadores() {
-		return $this->potenciadores;		
+		return $this->potenciadores;
 	}
-	
+
 	public function getPotenciadorPorTipo($potenciador) {
-		$flag = NULL;	
+		$flag = NULL;
 
 		foreach ($this->potenciadores as &$aux) {
 			if ($aux->getTipo() == $tipo){
@@ -57,17 +57,17 @@ class Inventario {
 			}
 		}
 
-		return $flag;	
+		return $flag;
 	}
 
-	public function addPotenciador($potenciador) {		
-		$i = findid ($this->potenciadores, $potenciador);
+	public function addPotenciador($potenciador) {
+		$i = $this->findid ($this->potenciadores, $potenciador);
 
 		if ($i == -1){
 			$this->potenciadores[] = $potenciador;
-		}		
+		}
 	}
-	
+
 	public function removePotenciador($potenciador) {
 		$i = findid ($this->potenciadores, $potenciador);
 
@@ -77,8 +77,8 @@ class Inventario {
 	}
 
 	private function findid($array, $item){
-		for ($i = 0; $i < count($array); $i++){
-			if ($aux == $item) {
+		for ($i = 0; $i < count($array); $i++) {
+			if ($array[$i] == $item) {
 				return $i;
 			}
 		}

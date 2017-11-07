@@ -16,25 +16,25 @@ class Personaje {
 	private $ventas;
 	private $inventario;
 
-	public function __construct($usuario, $nombre, $tipo) { 
+	public function __construct($usuario, $nombre, $tipo) {
 		$this->usuario = $usuario;
 		$this->nombre = $nombre;
 		$this->tipo = $tipo;
 		$this->ventas = array();
 		$this->inventario = Inventario::cargarPorPersonaje($this);
 	}
-		
+
 	public function generarHarina() {
 		$item = $this->inventario->getItemPorTipo(Item::$TIPO_HARINA); /*esta sentencia me devuelve el item del inventario*/
 
 		$item->setCantidad($item->getCantidad()+1);
-		
+
 	}
-	
+
 	public function generarOregano() {
 		$item = $this->inventario->getItemPorTipo(Item::$TIPO_OREGANO); /*esta sentencia me devuelve el item del inventario*/
 
-		$item->setCantidad($item->getCantidad()+1);	
+		$item->setCantidad($item->getCantidad()+1);
 	}
 
 	public function generarSalsa() {
@@ -48,7 +48,7 @@ class Personaje {
 
 		$item->setCantidad($item->getCantidad()+1);
 	}
-	
+
 	public function hacerMasa() {
 		$harina = $this->inventario->getItemPorTipo(Item::$TIPO_HARINA);
 
@@ -63,62 +63,57 @@ class Personaje {
 				$harina->setCantidad($harina->getCantidad()-15);
 
 			}
-		}		
+		}
 	}
-	
+
 	public function hacerSalsaPrep() {
 		$salsa = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA);
 
-		if ($salsa->getCantidad() >= 10){
+		if ($salsa->getCantidad() >= 10) {
 			$oregano = $this->inventario->getItemPorTipo(Item::$TIPO_OREGANO);
-			if ($oregano->getCantidad >= 15) {	
 
-
-
+			if ($oregano->getCantidad() >= 15) {
 				 $salsa_prep = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA_PREP);
-				 $cocinamejorada = $this->inventario->getPotenciadorPortTipo(Potenciador::$TIPO_COCINA_MEJORADA);
+				 $cocinamejorada = $this->inventario->getPotenciadorPorTipo(Potenciador::$TIPO_COCINA_MEJORADA);
 				 $salsa_prep->setCantidad($salsa_prep->getCantidad()+(5*$cocinamejorada->getCoeficiente()));
-
-
-				}
-
-
-				/*resolver si existe o no un potenciador para ver si opero con su ratio o no.*/
-
+				 $salsa->setCantidad($salsa->getCantidad()-10);
+				 $oregano->setCantidad($oregano->getCantidad()-15);
 			}
+			/*resolver si existe o no un potenciador para ver si opero con su ratio o no.*/
 
 		}
-		
+
 	}
 
+
 	public function crearCocina() {
-		
+
 	}
 
 	public function unirseCocina() {
-		
+
 	}
 
 	public function salirCocina() {
-		
+
 	}
 
 	public function comprarPotenciador() {
-		
+
 	}
 
 	public function hacerPizza() {
-		
+
 	}
 
 	public function getVentas() {
-		return $this->ventas;		
+		return $this->ventas;
 	}
-	
+
 	public function addVenta($venta) {
-		$this->venta[] = $venta;		
+		$this->venta[] = $venta;
 	}
-	
+
 	public function removeVenta($venta) {
 		$i = findid ($this->ventas, $venta);
 
@@ -138,7 +133,7 @@ class Personaje {
 
 	public function getInventario() {
 		return $this->inventario;
-		
+
 	}
 
 
