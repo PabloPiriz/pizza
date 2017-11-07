@@ -1,45 +1,46 @@
 <?php
 
-
-
 require_once ('item.php');
-class Venta {
 
+class Venta {
 
 	private $tipoDePizza;
 	private $fecha;
 	private $valor;
 
-	public function __construct($tipoDePizza, $fecha, $valor) { 
+	public function __construct($tipoDePizza, $fecha, $valor) {
 			$this->tipoDePizza = $tipoDePizza;
 			$this->fecha = $fecha;
-			$this->valor = $valor;		
+			$this->valor = $valor;
 	}
 
-		public function getTipoDePizza() {
-			return $this->tipoDePizza;
-		}
+	public function __toString() {
+		return "";
+	}
 
-		public function setTipoDePizza($tipoDePizza) {
-			$this->tipoDePizza = $tipoDePizza;
-		}
+	public function getTipoDePizza() {
+		return $this->tipoDePizza;
+	}
 
-		public function getFecha() {
-			return $this->fecha;
-		}
+	public function setTipoDePizza($tipoDePizza) {
+		$this->tipoDePizza = $tipoDePizza;
+	}
 
-		public function setFecha($fecha) {
-			$this->fecha = $fecha;
-		}
+	public function getFecha() {
+		return $this->fecha;
+	}
 
-		public function getValor() {
-			return $this->valor;
-		}
+	public function setFecha($fecha) {
+		$this->fecha = $fecha;
+	}
 
-		public function setValor($valor) {
-			$this->valor = $valor;
-		}
+	public function getValor() {
+		return $this->valor;
+	}
 
+	public function setValor($valor) {
+		$this->valor = $valor;
+	}
 }
 
 

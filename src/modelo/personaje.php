@@ -9,6 +9,11 @@ require_once ('potenciador.php');
 
 class Personaje {
 
+	public static $TIPO_SALSERO   = 0;
+	public static $TIPO_AMASADOR  = 1;
+	public static $TIPO_HORNEADOR = 2;
+	public static $TIPO_VENDEDOR  = 3;
+
 	private $id;
 	private $usuario;
 	private $nombre;
@@ -16,12 +21,36 @@ class Personaje {
 	private $ventas;
 	private $inventario;
 
-	public function __construct($usuario, $nombre, $tipo) {
-		$this->usuario = $usuario;
-		$this->nombre = $nombre;
-		$this->tipo = $tipo;
-		$this->ventas = array();
+	public function __construct($id, $usuario, $nombre, $tipo) {
+		$this->id         = $id;
+		$this->usuario    = $usuario;
+		$this->nombre     = $nombre;
+		$this->tipo       = $tipo;
+		$this->ventas     = array();
 		$this->inventario = Inventario::cargarPorPersonaje($this);
+	}
+
+	public function tipoToString() {
+		switch ($this->tipo) {
+			case Personaje::$TIPO_SALSERO:
+				return "Salsero";
+			case Personaje::$TIPO_AMASADOR:
+				return "Amasador";
+			case Personaje::$TIPO_HORNEADOR:
+				return "Horneador";
+			case Personaje::$TIPO_VENDEDOR:
+				return  "Vendedor";
+		}
+		return "";
+	}
+
+	public function __toString() {
+		$flag = "Personaje:<br>";
+		$flag = $flag . "Id:     " . $this->id . "<br>";
+		$flag = $flag . "Nombre: " . $this->nombre . "<br>";
+		$flag = $flag . "Tipo:   " . $this->tipoToString() . "<br>";
+		$flag = $flag . $this->inventario;
+		return $flag;
 	}
 
 	public function generarHarina() {
@@ -75,7 +104,14 @@ class Personaje {
 			if ($oregano->getCantidad() >= 15) {
 				 $salsa_prep = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA_PREP);
 				 $cocinamejorada = $this->inventario->getPotenciadorPorTipo(Potenciador::$TIPO_COCINA_MEJORADA);
-				 $salsa_prep->setCantidad($salsa_prep->getCantidad()+(5*$cocinamejorada->getCoeficiente()));
+
+				 $cantidad = 5 ;
+				 if ($cocinamejorada->isActive()){
+					 $cantidad = $cantidad * $cocinamejorada->getCoeficiente();
+				 }
+				 $salsa_prep->setCantidad($salsa_prep->getCantidad()+$cantidad);
+
+
 				 $salsa->setCantidad($salsa->getCantidad()-10);
 				 $oregano->setCantidad($oregano->getCantidad()-15);
 			}
@@ -83,6 +119,39 @@ class Personaje {
 
 		}
 
+	}
+
+	public function hacerPizza() {
+		$salsa_prep = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA_PREP);
+		if ($salsa_prep->getCantidad() >= 1) {
+			$masa = $this->inventario->getItemPorTipo(Item::$TIPO_MASA);
+			if ($masa->getCantidad() >= 1) {
+				$salsa_prep->setCantidad($salsa_prep->getCantidad()-1);
+				$masa->setCantidad($masa->getCantidad()-1);
+
+				$potenciador = $this->inventario->getPotenciadorPorTipo(Potenciador::$TIPO_HORNO_MEJORADO);
+				$cantidad = 1;
+				if ($cocinamejorada->isActive()){
+					$cantidad = $cantidad * $cocinamejorada->getCoeficiente();
+				}
+				$pizza = $this->inventario->getItemPorTipo(Item::$TIPO_PIZZA);
+				$pizza->setCantidad($pizza->getCantidad() + $cantidad);
+			}
+		}
+
+	}
+
+	public function venderPizza() {
+		$pizza = $this->inventario->getItemPorTipo(Item::$TIPO_PIZZA);
+
+
+	}
+
+	public function getVentas() {
+		return $this->ventas;
+	}
+	public function addVenta($venta) {
+		$this->venta[] = $venta;
 	}
 
 
@@ -98,28 +167,15 @@ class Personaje {
 
 	}
 
-	public function comprarPotenciador() {
-
-	}
-
-	public function hacerPizza() {
-
-	}
-
-	public function getVentas() {
-		return $this->ventas;
-	}
-
-	public function addVenta($venta) {
-		$this->venta[] = $venta;
-	}
-
-	public function removeVenta($venta) {
-		$i = findid ($this->ventas, $venta);
-
-		if ($i != -1){
-			unset($this->ventas[$i]);
-		}
+	public function comprarPotenciador($tipo) {
+		/*$dinero = $this->inventario->getItemPorTipo(Item::$TIPO_DINERO);
+		$potenciador = $this->inventario->getPotenciadorPorTipo($tipo);
+		if (!$potenciador->isActive()) {
+			if ($this->dinero->getCantidad() >= $potenciador->getPrecio()) {
+				$dinero->setCantidad($dinero->getCantidad() - $potenciador->getPrecio());
+				$potenciador->toogleActivo();
+			}
+		}*/
 	}
 
 	private function findid($array, $venta){
@@ -133,12 +189,7 @@ class Personaje {
 
 	public function getInventario() {
 		return $this->inventario;
-
 	}
-
-
-
-
 }
 
 

@@ -1,37 +1,43 @@
 <?php
 
+Item::$HARINA      = new Item (0, "Harina");
+Item::$AGUA        = new Item (1, "Agua");
+Item::$OREGANO     = new Item (2, "Oregano");
+Item::$SALSA       = new Item (3, "Salsa");
+Item::$SALSA_PREP  = new Item (4, "Salsa Preparada");
+Item::$MASA        = new Item (5, "Masa");
+
 class Item {
 
-	public static $TIPO_HARINA          = 0;
-	public static $TIPO_AGUA            = 1;
-	public static $TIPO_OREGANO         = 2;
-	public static $TIPO_SALSA           = 3;
-	public static $TIPO_SALSA_PREP      = 4;
-	public static $TIPO_MASA            = 5;
-	public static $TIPO_PIZZA           = 6;
-	public static $TIPO_DINERO          = 7;
+	public static $HARINA;
+	public static $AGUA;
+	public static $OREGANO;
+	public static $SALSA;
+	public static $SALSA_PREP;
+	public static $MASA;
 
-	private $tipo;
-	private $cantidad;
+	private $id;
+	private $nombre;
 
-	public function __construct($tipo, $cantidad) { 
-		$this->tipo = $tipo;
-		$this->cantidad = $cantidad;
-	}
-	
-	public function getTipo() {
-		return $this->tipo;
-	}
-	
-	public function setCantidad($cantidad) {
-		$this->cantidad = $cantidad;
-	}
-	
-	public function getCantidad() {
-		return $this->cantidad;		
+	public function __construct($id, $nombre) {
+		$this->id     = $id;
+		$this->nombre = $nombre;
 	}
 
+	public function __toString() {
+		return "Nombre: ".$this->nombre;
+	}
+
+	public function getId() {
+		return $this->id;
+	}
+
+	public function setNombre($nombre) {
+		$this->nombre = $nombre;
+	}
+	public function getNombre() {
+		return $this->nombre;
+	}
 }
-
 
 ?>

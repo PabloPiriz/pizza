@@ -7,7 +7,7 @@ asd
 </head>
 <body>
 	<?php
-	require_once ('modelo/personaje.php');
+	/*require_once ('modelo/personaje.php');
 	require_once ('modelo/inventario.php');
 	require_once ('modelo/item.php');
 	$personaje = new Personaje(NULL, 'juanalvertito', 2);
@@ -24,7 +24,12 @@ asd
 	echo 'Oregano: ' . $personaje->getInventario()->getItemPorTipo(Item::$TIPO_OREGANO)->getCantidad() . '<br>';
 
 	echo 'Salsa preparada: ' . $personaje->getInventario()->getItemPorTipo(Item::$TIPO_SALSA_PREP)->getCantidad() . '<br>';
+	*/
 
+	require_once ('modelo/personaje.php');
+
+	$personaje =  new Personaje(0, NULL, 'perder', 2);
+	echo $personaje;
 
 
 	?>

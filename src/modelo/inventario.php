@@ -2,113 +2,107 @@
 
 require_once ('item.php');
 require_once ('potenciador.php');
+require_once ('map.php');
 
 class Inventario {
 
+	private $dinero;
 	private $items;
+	private $pizzas;
 	private $potenciadores;
 
-
 	public function __construct() {
-		$this->items = array();
-		$this->potenciadores = array();
+		$this->items         = new Map();
+		$this->pizzas        = new Map();
+		$this->potenciadores = new Map();
 	}
 
-	public function getItems() {
-		return $this->items;
-	}
+	public function __toString() {
+		$flag = "Dinero: " . $this->dinero . "<br>";
 
-	public function getItemPorTipo($tipo) {
-		$flag = NULL;
+		$flag = $flag . "Items:<br>";
+		foreach ($this->items->items as &$item)
+			$flag = $flag . "	Item [" . $item->key . "] Cantidad [" . $item->value . "]<br>";
 
-		foreach ($this->items as &$aux) {
-			if ($aux->getTipo() == $tipo){
-				$flag = $aux;
-				break;
-			}
-		}
+		$flag = $flag . "Pizzas:<br>";
+		foreach ($this->pizzas->items as &$item)
+			$flag = $flag . "	Pizza [" . $item->key . "] Cantidad [" . $item->value . "]<br>";
+
+		$flag = $flag . "Potenciadores:<br>";
+		foreach ($this->potenciadores->items as &$item)
+			$flag = $flag . "	Potenciador [" . $item->key . "] Activo [" . $item->value . "]<br>";
 
 		return $flag;
 	}
 
-	public function addItem($item) {
-		$this->items[] = $item;
+	public function setDinero($dinero) {
+		$this->dinero;
+	}
+	public function getDinero() {
+		return $this->dinero;
 	}
 
-	public function removeItem($item) {
-		$i = $this->findid ($this->items, $item);
 
-		if ($i != -1){
-			unset($this->items[$i]);
-		}
+	public function addItem($item, $cantidad) {
+		$this->items->set($item, $cantidad);
+	}
+	public function setCantItem($item, $cant) {
+		$aux = $this->items->get($item);
+
+		if ($aux != NULL) $aux->value = $cant;
+	}
+	public function getItemCant($item) {
+		return $this->items->get($item)->value;
 	}
 
-	public function getPotenciadores() {
-		return $this->potenciadores;
+
+	public function addPotenciador($potenciador, $activo) {
+		$this->potenciadores->set($potenciador, $activo);
+	}
+	public function potenciadorEstaActico($potenciador) {
+		return $this->potenciadores->get($potenciador)->value;
+	}
+	public function togglePotenciador($potenciador) {
+		$aux = $this->potenciadores->get($potenciador);
+
+		if ($aux != NULL) $aux->value = !($aux->value);
 	}
 
-	public function getPotenciadorPorTipo($potenciador) {
-		$flag = NULL;
 
-		foreach ($this->potenciadores as &$aux) {
-			if ($aux->getTipo() == $tipo){
-				$flag = $aux;
-				break;
-			}
-		}
-
-		return $flag;
+	public function addPizza ($pizza, $cant) {
+		$this->pizzas->set($pizza, $cant);
 	}
+	public function setCantPizza($pizza, $cant) {
+		$aux = $this->pizzas->get($pizza);
 
-	public function addPotenciador($potenciador) {
-		$i = $this->findid ($this->potenciadores, $potenciador);
-
-		if ($i == -1){
-			$this->potenciadores[] = $potenciador;
-		}
+		if ($aux != NULL) $aux->value = $cant;
 	}
-
-	public function removePotenciador($potenciador) {
-		$i = findid ($this->potenciadores, $potenciador);
-
-		if ($i != -1){
-			unset($this->potenciadores[$i]);
-		}
-	}
-
-	private function findid($array, $item){
-		for ($i = 0; $i < count($array); $i++) {
-			if ($array[$i] == $item) {
-				return $i;
-			}
-		}
-		return -1;
+	public function getCantPizza($pizza) {
+		return $this->pizzas->get($pizza)->value;
 	}
 
 	public static function cargarPorPersonaje($personaje){
-		/*Devolver el inventario que corresponde al personaje dado*/
+		//Devolver el inventario que corresponde al personaje dado
 		$aux = new Inventario();
 
-		$aux->addItem( new Item(Item::$TIPO_HARINA,  0) );
-		$aux->addItem( new Item(Item::$TIPO_OREGANO, 0) );
-		$aux->addItem( new Item(Item::$TIPO_SALSA,   0) );
-		$aux->addItem( new Item(Item::$TIPO_AGUA,    0) );
+		$aux->setDinero(0);
 
-		$aux->addItem( new Item(Item::$TIPO_SALSA_PREP, 0) );
-		$aux->addItem( new Item(Item::$TIPO_MASA,       0) );
-		$aux->addItem( new Item(Item::$TIPO_PIZZA,      0) );
-		$aux->addItem( new Item(Item::$TIPO_DINERO,     0) );
+		$aux->addItem(Item::$HARINA,  0);
+		$aux->addItem(Item::$OREGANO, 0);
+		$aux->addItem(Item::$SALSA,   0);
+		$aux->addItem(Item::$AGUA,    0);
 
-		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_COCINA_MEJORADA, 1) );
-		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_HORNO_MEJORADO,  1) );
-		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_CAPACITACION,    1) );
-		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_DELIVERY,        1) );
-		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_SABORES,         1) );
+		$aux->addItem(Item::$SALSA_PREP, 0);
+		$aux->addItem(Item::$MASA,       0);
+
+		$aux->addPotenciador(Potenciador::$COCINA_MEJORADA, true);
+		$aux->addPotenciador(Potenciador::$HORNO_MEJORADO,  true);
+		$aux->addPotenciador(Potenciador::$CAPACITACION,    true);
+		$aux->addPotenciador(Potenciador::$DELIVERY,        true);
+		$aux->addPotenciador(Potenciador::$SABORES,         true);
 
 		return $aux;
-
 	}
-
 }
 
 
