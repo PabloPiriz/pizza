@@ -47,8 +47,25 @@ class Inventario {
 		return $this->potenciadores;		
 	}
 	
-	public function addPotenciador($potenciador) {
-		$this->potenciadores[] = $potenciador;		
+	public function getPotenciadorPorTipo($potenciador) {
+		$flag = NULL;	
+
+		foreach ($this->potenciadores as &$aux) {
+			if ($aux->getTipo() == $tipo){
+				$flag = $aux;
+				break;
+			}
+		}
+
+		return $flag;	
+	}
+
+	public function addPotenciador($potenciador) {		
+		$i = findid ($this->potenciadores, $potenciador);
+
+		if ($i == -1){
+			$this->potenciadores[] = $potenciador;
+		}		
 	}
 	
 	public function removePotenciador($potenciador) {
@@ -81,6 +98,12 @@ class Inventario {
 		$aux->addItem( new Item(Item::$TIPO_MASA,       0) );
 		$aux->addItem( new Item(Item::$TIPO_PIZZA,      0) );
 		$aux->addItem( new Item(Item::$TIPO_DINERO,     0) );
+
+		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_COCINA_MEJORADA, 1) );
+		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_HORNO_MEJORADO,  1) );
+		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_CAPACITACION,    1) );
+		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_DELIVERY,        1) );
+		$aux->addPotenciador( new Potenciador(Potenciador::$TIPO_SABORES,         1) );
 
 		return $aux;
 

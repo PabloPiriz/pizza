@@ -67,6 +67,27 @@ class Personaje {
 	}
 	
 	public function hacerSalsaPrep() {
+		$salsa = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA);
+
+		if ($salsa->getCantidad() >= 10){
+			$oregano = $this->inventario->getItemPorTipo(Item::$TIPO_OREGANO);
+			if ($oregano->getCantidad >= 15) {	
+
+
+
+				 $salsa_prep = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA_PREP);
+				 $cocinamejorada = $this->inventario->getPotenciadorPortTipo(Potenciador::$TIPO_COCINA_MEJORADA);
+				 $salsa_prep->setCantidad($salsa_prep->getCantidad()+(5*$cocinamejorada->getCoeficiente()));
+
+
+				}
+
+
+				/*resolver si existe o no un potenciador para ver si opero con su ratio o no.*/
+
+			}
+
+		}
 		
 	}
 
