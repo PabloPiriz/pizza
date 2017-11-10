@@ -1,11 +1,11 @@
 <?php
 
-require_once ('usuario.php');
 require_once ('cocina.php');
 require_once ('inventario.php');
 require_once ('venta.php');
 require_once ('item.php');
 require_once ('potenciador.php');
+require_once ('map.php');
 
 class Personaje {
 
@@ -15,18 +15,16 @@ class Personaje {
 	public static $TIPO_VENDEDOR  = 3;
 
 	private $id;
-	private $usuario;
 	private $nombre;
 	private $tipo;
-	private $ventas;
 	private $inventario;
+	// private $ventas;
 
-	public function __construct($id, $usuario, $nombre, $tipo) {
+	public function __construct($id, $nombre, $tipo) {
 		$this->id         = $id;
-		$this->usuario    = $usuario;
 		$this->nombre     = $nombre;
 		$this->tipo       = $tipo;
-		$this->ventas     = array();
+		// $this->ventas     = array();
 		$this->inventario = Inventario::cargarPorPersonaje($this);
 	}
 
@@ -46,149 +44,138 @@ class Personaje {
 
 	public function __toString() {
 		$flag = "Personaje:<br>";
-		$flag = $flag . "Id:     " . $this->id . "<br>";
-		$flag = $flag . "Nombre: " . $this->nombre . "<br>";
-		$flag = $flag . "Tipo:   " . $this->tipoToString() . "<br>";
-		$flag = $flag . $this->inventario;
+		$flag .= "Id:     " . $this->id . "<br>";
+		$flag .= "Nombre: " . $this->nombre . "<br>";
+		$flag .= "Tipo:   " . $this->tipoToString() . "<br>";
+		$flag .= $this->inventario;
 		return $flag;
 	}
 
+	public function equals($personaje) {
+		if ($personaje != null)
+			if ($this->id == $personaje->id)
+				return true;
+
+		return false;
+	}
+
 	public function generarHarina() {
-		$item = $this->inventario->getItemPorTipo(Item::$TIPO_HARINA); /*esta sentencia me devuelve el item del inventario*/
-
-		$item->setCantidad($item->getCantidad()+1);
-
+		$this->inventario->modifyItem (Item::$HARINA, 1);
 	}
-
 	public function generarOregano() {
-		$item = $this->inventario->getItemPorTipo(Item::$TIPO_OREGANO); /*esta sentencia me devuelve el item del inventario*/
-
-		$item->setCantidad($item->getCantidad()+1);
+		$this->inventario->modifyItem (Item::$OREGANO, 1);
 	}
-
 	public function generarSalsa() {
-		$item = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA); /*esta sentencia me devuelve el item del inventario*/
-
-		$item->setCantidad($item->getCantidad()+1);
+		$this->inventario->modifyItem (Item::$SALSA, 1);
+	}
+	public function generarAgua() {
+		$this->inventario->modifyItem (Item::$AGUA, 1);
 	}
 
-	public function generarAgua() {
-		$item = $this->inventario->getItemPorTipo(Item::$TIPO_AGUA); /*esta sentencia me devuelve el item del inventario*/
+	//Craftea un item
+	public function hacerItem ($requisitos, $salida) {
+		//Si falta algun item se termina la funcion
+		foreach ($requisitos as &$requisito)
+			if ($this->inventario->getItemCant ($requisito->key) < $requisito->value)
+				return false;
 
-		$item->setCantidad($item->getCantidad()+1);
+		//Resta los requisitos
+		foreach ($requisitos as &$requisito)
+			$this->inventario->modifyItem ($requisito->key, -$requisito->value);
+
+		//Craftea el item
+		$this->inventario->modifyItem ($salida->key, $salida->value);
+		return true;
 	}
 
 	public function hacerMasa() {
-		$harina = $this->inventario->getItemPorTipo(Item::$TIPO_HARINA);
+		$cantHarina = 10;
+		$cantAgua   = 15;
+		$cantMasa   = 5;
 
-		if ($harina->getCantidad() >= 10){
-			$agua = $this->inventario->getItemPorTipo(Item::$TIPO_AGUA);
-
-			if ($agua->getCantidad() >= 15){
-
-				$masa = $this->inventario->getItemPorTipo(Item::$TIPO_MASA);
-				$masa->setCantidad($masa->getCantidad()+5);
-				$agua->setCantidad($agua->getCantidad()-10);
-				$harina->setCantidad($harina->getCantidad()-15);
-
-			}
-		}
+		return $this->hacerItem(
+			array (
+				new Par (Item::$HARINA, $cantHarina),
+				new Par (Item::$AGUA,   $cantAgua)
+			),
+				new Par (Item::$MASA, $cantMasa)
+		);
 	}
 
 	public function hacerSalsaPrep() {
-		$salsa = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA);
+		$cantSalsa     = 10;
+		$cantOregano   = 15;
+		$cantSalsaPrep = 5;
 
-		if ($salsa->getCantidad() >= 10) {
-			$oregano = $this->inventario->getItemPorTipo(Item::$TIPO_OREGANO);
+		$this->inventario->potenciar(Potenciador::$COCINA_MEJORADA, $cantSalsaPrep);
 
-			if ($oregano->getCantidad() >= 15) {
-				 $salsa_prep = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA_PREP);
-				 $cocinamejorada = $this->inventario->getPotenciadorPorTipo(Potenciador::$TIPO_COCINA_MEJORADA);
-
-				 $cantidad = 5 ;
-				 if ($cocinamejorada->isActive()){
-					 $cantidad = $cantidad * $cocinamejorada->getCoeficiente();
-				 }
-				 $salsa_prep->setCantidad($salsa_prep->getCantidad()+$cantidad);
-
-
-				 $salsa->setCantidad($salsa->getCantidad()-10);
-				 $oregano->setCantidad($oregano->getCantidad()-15);
-			}
-			/*resolver si existe o no un potenciador para ver si opero con su ratio o no.*/
-
-		}
-
+		return $this->hacerItem(
+			array (
+				new Par (Item::$SALSA,   $cantSalsa),
+				new Par (Item::$OREGANO, $cantOregano)
+			),
+				new Par (Item::$SALSA_PREP, $cantSalsaPrep)
+		);
 	}
 
 	public function hacerPizza() {
-		$salsa_prep = $this->inventario->getItemPorTipo(Item::$TIPO_SALSA_PREP);
-		if ($salsa_prep->getCantidad() >= 1) {
-			$masa = $this->inventario->getItemPorTipo(Item::$TIPO_MASA);
-			if ($masa->getCantidad() >= 1) {
-				$salsa_prep->setCantidad($salsa_prep->getCantidad()-1);
-				$masa->setCantidad($masa->getCantidad()-1);
+		$cantMasa      = 1;
+		$cantSalsaPrep = 1;
+		$cantPizza     = 1;
 
-				$potenciador = $this->inventario->getPotenciadorPorTipo(Potenciador::$TIPO_HORNO_MEJORADO);
-				$cantidad = 1;
-				if ($cocinamejorada->isActive()){
-					$cantidad = $cantidad * $cocinamejorada->getCoeficiente();
-				}
-				$pizza = $this->inventario->getItemPorTipo(Item::$TIPO_PIZZA);
-				$pizza->setCantidad($pizza->getCantidad() + $cantidad);
+		$this->inventario->potenciar(Potenciador::$HORNO_MEJORADO, $cantPizza);
+
+		return $this->hacerItem(
+			array (
+				new Par (Item::$MASA,       $cantMasa),
+				new Par (Item::$SALSA_PREP, $cantSalsaPrep)
+			),
+				new Par (Item::$PIZZA_COMUN, $cantPizza)
+		);
+	}
+
+	public function venderPizza($pizza) {
+		if ( $this->inventario->getItemCant(Item::$PIZZA_COMUN) >= 1 ) {
+			$this->inventario->modifyItem(Item::$PIZZA_COMUN, -1);
+			$precio = 0;
+			if ($this->tipo == Personaje::$TIPO_SALSERO) {
+				$precio = 40;
+			} elseif ($this->tipo == Personaje::$TIPO_AMASADOR) {
+				$precio = 30;
+			} elseif ($this->tipo == Personaje::$TIPO_HORNEADOR) {
+				$precio = 50;
+			} elseif ($this->tipo == Personaje::$TIPO_VENDEDOR) {
+				$precio = 100;
 			}
+			$this->inventario->modifyDinero($precio);
+		$venta = new Venta($this, $pizza, date("Y/m/d"), $precio);
 		}
-
 	}
 
-	public function venderPizza() {
-		$pizza = $this->inventario->getItemPorTipo(Item::$TIPO_PIZZA);
-
-
-	}
-
-	public function getVentas() {
-		return $this->ventas;
-	}
-	public function addVenta($venta) {
-		$this->venta[] = $venta;
-	}
-
-
-	public function crearCocina() {
-
-	}
-
-	public function unirseCocina() {
-
-	}
-
-	public function salirCocina() {
-
-	}
-
-	public function comprarPotenciador($tipo) {
-		/*$dinero = $this->inventario->getItemPorTipo(Item::$TIPO_DINERO);
-		$potenciador = $this->inventario->getPotenciadorPorTipo($tipo);
-		if (!$potenciador->isActive()) {
-			if ($this->dinero->getCantidad() >= $potenciador->getPrecio()) {
-				$dinero->setCantidad($dinero->getCantidad() - $potenciador->getPrecio());
-				$potenciador->toogleActivo();
-			}
-		}*/
+	public function comprarPotenciador($potenciador) {
+		$this->inventario->comprarPotenciador($potenciador);
 	}
 
 	private function findid($array, $venta){
-		for ($i = 0; $i < count($array); $i++){
-			if ($aux == $venta) {
-				return $i;
-			}
-		}
+		for ($i = 0; $i < count($array); $i++)
+			if ($aux == $venta)	return $i;
+
 		return -1;
 	}
 
 	public function getInventario() {
 		return $this->inventario;
+	}
+	public function getId() {
+		return $this->id;
+	}
+	public function getTipo() {
+		return $this->tipo;
+	}
+
+	public static function getPersonajePorUsuario($usuario) {
+		// TODO: obtener el usuario o null
+		return null;
 	}
 }
 

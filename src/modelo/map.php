@@ -10,7 +10,7 @@ class Map {
 	public function set($key, $value) {
 		$aux = $this->get($key);
 		if ($aux == NULL)
-			$this->items[] = new MapItem ($key, $value);
+			$this->items[] = new Par ($key, $value);
 		else
 			$aux->value = $value;
 	}
@@ -22,7 +22,7 @@ class Map {
 	}
 }
 
-class MapItem {
+class Par {
 	public $key;
 	public $value;
 

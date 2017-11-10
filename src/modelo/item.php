@@ -6,6 +6,7 @@ Item::$OREGANO     = new Item (2, "Oregano");
 Item::$SALSA       = new Item (3, "Salsa");
 Item::$SALSA_PREP  = new Item (4, "Salsa Preparada");
 Item::$MASA        = new Item (5, "Masa");
+Item::$PIZZA_COMUN = new Item (6, "Pizza Comun");
 
 class Item {
 
@@ -15,6 +16,7 @@ class Item {
 	public static $SALSA;
 	public static $SALSA_PREP;
 	public static $MASA;
+	public static $PIZZA_COMUN;
 
 	private $id;
 	private $nombre;
