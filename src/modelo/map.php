@@ -20,6 +20,17 @@ class Map {
 			if ($item->key == $item) return $item;
 		return NULL;
 	}
+
+	public function add($pares) {
+		foreach ($pares as $par)
+			$this->set($par->key, $par->value);
+	}
+
+	public static MapIniciado($pares) {
+		$flag = new Map();
+		$flag->add($pares);
+		return $flag;
+	}
 }
 
 class Par {

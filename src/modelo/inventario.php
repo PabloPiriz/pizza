@@ -94,15 +94,15 @@ class Inventario {
 
 		$aux->setDinero(0);
 
-		$aux->addItem(Item::$HARINA,  0);
-		$aux->addItem(Item::$OREGANO, 0);
-		$aux->addItem(Item::$SALSA,   0);
-		$aux->addItem(Item::$AGUA,    0);
+		$aux->addItem(Recurso::$HARINA,  0);
+		$aux->addItem(Recurso::$OREGANO, 0);
+		$aux->addItem(Recurso::$SALSA,   0);
+		$aux->addItem(Recurso::$AGUA,    0);
 
-		$aux->addItem(Item::$SALSA_PREP, 0);
-		$aux->addItem(Item::$MASA,       0);
+		$aux->addItem(Recurso::$SALSA_PREP, 0);
+		$aux->addItem(Recurso::$MASA,       0);
 
-		$aux->addItem(Item::$PIZZA_COMUN, 0);
+		$aux->addItem(Pizza::$PIZZA_COMUN, 0);
 
 		$aux->addPotenciador(Potenciador::$COCINA_MEJORADA, true);
 		$aux->addPotenciador(Potenciador::$HORNO_MEJORADO,  true);

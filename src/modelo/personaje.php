@@ -60,16 +60,16 @@ class Personaje {
 	}
 
 	public function generarHarina() {
-		$this->inventario->modifyItem (Item::$HARINA, 1);
+		$this->inventario->modifyItem (Recurso::$HARINA, 1);
 	}
 	public function generarOregano() {
-		$this->inventario->modifyItem (Item::$OREGANO, 1);
+		$this->inventario->modifyItem (Recurso::$OREGANO, 1);
 	}
 	public function generarSalsa() {
-		$this->inventario->modifyItem (Item::$SALSA, 1);
+		$this->inventario->modifyItem (Recurso::$SALSA, 1);
 	}
 	public function generarAgua() {
-		$this->inventario->modifyItem (Item::$AGUA, 1);
+		$this->inventario->modifyItem (Recurso::$AGUA, 1);
 	}
 
 	//Craftea un item
@@ -95,10 +95,10 @@ class Personaje {
 
 		return $this->hacerItem(
 			array (
-				new Par (Item::$HARINA, $cantHarina),
-				new Par (Item::$AGUA,   $cantAgua)
+				new Par (Recurso::$HARINA, $cantHarina),
+				new Par (Recurso::$AGUA,   $cantAgua)
 			),
-				new Par (Item::$MASA, $cantMasa)
+				new Par (Recurso::$MASA, $cantMasa)
 		);
 	}
 
@@ -111,10 +111,10 @@ class Personaje {
 
 		return $this->hacerItem(
 			array (
-				new Par (Item::$SALSA,   $cantSalsa),
-				new Par (Item::$OREGANO, $cantOregano)
+				new Par (Recurso::$SALSA,   $cantSalsa),
+				new Par (Recurso::$OREGANO, $cantOregano)
 			),
-				new Par (Item::$SALSA_PREP, $cantSalsaPrep)
+				new Par (Recurso::$SALSA_PREP, $cantSalsaPrep)
 		);
 	}
 
@@ -127,28 +127,19 @@ class Personaje {
 
 		return $this->hacerItem(
 			array (
-				new Par (Item::$MASA,       $cantMasa),
-				new Par (Item::$SALSA_PREP, $cantSalsaPrep)
+				new Par (Recurso::$MASA,       $cantMasa),
+				new Par (Recurso::$SALSA_PREP, $cantSalsaPrep)
 			),
-				new Par (Item::$PIZZA_COMUN, $cantPizza)
+				new Par (Pizza::$PIZZA_COMUN, $cantPizza)
 		);
 	}
-
 	public function venderPizza($pizza) {
-		if ( $this->inventario->getItemCant(Item::$PIZZA_COMUN) >= 1 ) {
-			$this->inventario->modifyItem(Item::$PIZZA_COMUN, -1);
-			$precio = 0;
-			if ($this->tipo == Personaje::$TIPO_SALSERO) {
-				$precio = 40;
-			} elseif ($this->tipo == Personaje::$TIPO_AMASADOR) {
-				$precio = 30;
-			} elseif ($this->tipo == Personaje::$TIPO_HORNEADOR) {
-				$precio = 50;
-			} elseif ($this->tipo == Personaje::$TIPO_VENDEDOR) {
-				$precio = 100;
-			}
-			$this->inventario->modifyDinero($precio);
-		$venta = new Venta($this, $pizza, date("Y/m/d"), $precio);
+		if ($this->inventario->getItemCant(Recurso::$PIZZA_COMUN) >= 1) {
+			$this->inventario->modifyItem(Recurso::$PIZZA_COMUN, -1);
+			$precio = $pizza->
+			$this->inventario->modifiyDinero($pizza->precio);
+			$venta = new Venta($this, $pizza, date("Y/m/d"), $precio);
+			$venta->save();
 		}
 	}
 
